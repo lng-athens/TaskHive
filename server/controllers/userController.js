@@ -13,7 +13,7 @@ const CreateUser = expressAsyncHandler(async (req, res) => {
 
     const user = await userCollection.findOne(filter);
     if (user) {
-        logger.warn(`User creation failed: ${email} already exists`);
+        logger.warn(`User creation failed: Username or Email already exists (${username}, ${email})`);
         res.status(400);
         throw new Error('User already exists');
     }
@@ -29,12 +29,12 @@ const CreateUser = expressAsyncHandler(async (req, res) => {
 
     const addUserResult = await userCollection.insertOne(newUser);
     if (!addUserResult.acknowledged || !addUserResult.insertedId) {
-        logger.error(`Failed to create user: ${email}`);
+        logger.error('Failed to create user');
         res.status(500);
         throw new Error('Failed to create user');
     }
 
-    logger.info(`User created successfully: ${email}`);
+    logger.info(`User created successfully: ${username} (${email})`);
     res.status(201).send({message: 'User created successfully'});
 });
 
