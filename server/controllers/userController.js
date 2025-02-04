@@ -2,6 +2,7 @@ const expressAsyncHandler = require('express-async-handler');
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const { connectDB } = require('../configs/database.conf');
+const logger = require('../utils/Logger');
 
 const CreateUser = expressAsyncHandler(async (req, res) => {
     const { firstName, lastName, username, email, password } = req.body;
@@ -12,6 +13,7 @@ const CreateUser = expressAsyncHandler(async (req, res) => {
 
     const user = await userCollection.findOne(filter);
     if (user) {
+        logger.warn(`User creation failed: ${email} already exists`);
         res.status(400);
         throw new Error('User already exists');
     }
@@ -27,10 +29,12 @@ const CreateUser = expressAsyncHandler(async (req, res) => {
 
     const addUserResult = await userCollection.insertOne(newUser);
     if (!addUserResult.acknowledged || !addUserResult.insertedId) {
+        logger.error(`Failed to create user: ${email}`);
         res.status(500);
         throw new Error('Failed to create user');
     }
 
+    logger.info(`User created successfully: ${email}`);
     res.status(201).send({message: 'User created successfully'});
 });
 

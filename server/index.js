@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const useragent = require('express-useragent');
 const cookieParser = require('cookie-parser');
+const logger = require('./utils/Logger');
 const app = express();
 const { connectDB } = require('./configs/database.conf');
 const errorHandler = require('./middlewares/ErrorHandler');
@@ -29,9 +30,15 @@ app.use('/users', require('./routes/userRoutes'));
 app.use(errorHandler);
 
 const startServer = async () => {
-    await connectDB();
-
-    app.listen(config.port, () => console.log(`Server running in ${config.env} mode at port ${config.port}`));
+    try {
+        await connectDB();
+        app.listen(config.port, () => {
+            logger.info(`Server running in ${config.env} mode at port ${config.port}`);
+        });
+    } catch (error) {
+        logger.error(`Server failed to start: ${error.message}`);
+        process.exit(1);
+    }
 };
 
 startServer();

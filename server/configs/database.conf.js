@@ -1,5 +1,6 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const config = require('./app.conf');
+const logger = require('../utils/Logger');
 
 let client;
 
@@ -13,9 +14,9 @@ const connectDB = async () => {
                     deprecationErrors: true
                 }
             });
-            console.log('Connected to MongoDB');
+            logger.info('Connected to MongoDB');
         } catch (error) {
-            console.error(error.message);
+            logger.error(error.message);
             process.exit(1);
         }
     }

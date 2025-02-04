@@ -4,7 +4,13 @@ const logger = require('../utils/Logger');
 const errorHandler = (err, req, res, next) => {
     const statusCode = res.statusCode || 500;
 
-    logger.error(`[${statusCode}] ${err.message}`, { stack: err.stack, path: req.originalUrl });
+    logger.error(`[${statusCode}] ${err.message}`, { 
+        method: req.method,
+        path: req.originalUrl,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'], 
+        stack: err.stack 
+    });    
 
     res.status(statusCode).json({
         title: getErrorTitle(statusCode),
