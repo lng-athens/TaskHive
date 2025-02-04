@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const {} = require('../middlewares/Authentication');
-const {} = require('../middlewares/RequestBodyValidator');
-const {} = require('../controllers/userController');
+const { ValidateUserRequestBody } = require('../middlewares/RequestBodyValidator');
+const { CreateUser } = require('../controllers/userController');
 
-
+router.route('/sign-up').post(ValidateUserRequestBody, CreateUser);
 
 module.exports = router;
