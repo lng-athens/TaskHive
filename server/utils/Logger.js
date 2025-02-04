@@ -1,4 +1,8 @@
 const { createLogger, format, transports } = require('winston');
+const config = require('../configs/app.conf');
+
+const devFormat = format.printf(({ timestamp, level, message }) => `${timestamp} ${level}: ${message}`);
+const prodFormat = format.printf(({ level, message }) => `${level}: ${message}`);
 
 const logger = createLogger({
     level: 'debug',
@@ -12,7 +16,7 @@ const logger = createLogger({
         new transports.Console({
             format: format.combine(
                 format.colorize(),
-                format.printf(({ timestamp, level, message }) => `${timestamp} ${level}: ${message}`)
+                config.env === 'development' ? devFormat : prodFormat
             )
         }),
         new transports.File({ filename: 'logs/error.log', level: 'error' }),
