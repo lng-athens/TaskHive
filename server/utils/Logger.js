@@ -12,7 +12,7 @@ const logger = createLogger({
         new transports.Console({
             format: format.combine(
                 format.colorize(),
-                format.simple()
+                format.printf(({ timestamp, level, message }) => `${timestamp} ${level}: ${message}`)
             )
         }),
         new transports.File({ filename: 'logs/error.log', level: 'error' }),
