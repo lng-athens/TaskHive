@@ -27,7 +27,32 @@ const isValidDay = (day, month, year) => {
 
 const ValidateTodoRequestBody = (req, res, next) => {};
 
-const ValidateUserRequestBody = (req, res, next) => {};
+const ValidateUserRequestBody = (req, res, next) => {
+    const {
+        firstName,
+        lastName,
+        username,
+        email,
+        password,
+        userId
+    } = req.body;
+
+    let errorFields = [];
+
+    if (firstName && !isName(firstName)) {errorFields.push('firstName')}
+    if (lastName && !isName(lastName)) {errorFields.push('lastName')}
+    if (username && !isUsername(username)) {errorFields.push('username')}
+    if (email && !validator.isEmail(email)) {errorFields.push('email')}
+    if (password && !validator.isStrongPassword(password, {minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1})) {errorFields.push('password')}
+    if (userId && !(isUsername(userId) || validator.isEmail(userId))) {errorFields.push('userId')}
+
+    if (errorFields.length > 0) {
+        res.status(400);
+        throw new Error(`Invalid fields: ${errorFields.join(', ')}`);
+    }
+
+    next();
+};
 
 module.exports = {
     ValidateTodoRequestBody,
