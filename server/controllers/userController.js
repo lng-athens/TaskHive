@@ -82,8 +82,7 @@ const LoginUser = expressAsyncHandler(async (req, res) => {
     };
 
     const { privateKey, publicKey, token } = await generateToken(payload);
-    logger.info('Token generated for: ', user.username);
-
+    
     const userkeyFilter = {$or: [{username: userId}, {email: userId}]};
     const userkey = await userkeyCollection.findOne(userkeyFilter);
     if (userkey) {
