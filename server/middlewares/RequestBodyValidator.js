@@ -1,4 +1,5 @@
 const validator = require('validator');
+const logger = require('../utils/Logger');
 
 const isUsername = (value) => {
     const regex = /^[A-Za-z0-9][A-Za-z0-9_.]*$/;
@@ -25,7 +26,50 @@ const isValidDay = (day, month, year) => {
     return day <= daysInMonth;
 };
 
-const ValidateTodoRequestBody = (req, res, next) => {};
+const isValidTask = (value) => {
+    const regex = /^[A-Za-z0-9][A-Za-z0-9 ]*$/;
+    return regex.test(value);
+};
+
+const isValidText = (value) => {
+    const regex = /^[A-Za-z0-9!@#\$%\^&\*\(\)\-_\+=\[\]\{\};:'",.<>\/?\\|`~][A-Za-z0-9!@#\$%\^&\*\(\)\-_\+=\[\]\{\};:'",.<>\/?\\|`~ ]*$/;
+
+    return regex.test(value);
+};
+
+const isValidDeadline = (value) => {
+    const date = new Date(value);
+    return !isNaN(date.getTime());
+};
+
+const isValidCategory = (category) => {
+    const categories = ['Immediate', 'Urgent', 'High Priority', 'Moderate Priority', 'Low Priority'];
+    return categories.includes(category);
+};
+
+const ValidateTodoRequestBody = (req, res, next) => {
+    const {
+        task,
+        details,
+        category,
+        deadline
+    } = req.body.taskDetails;
+
+    let errorFields = [];
+
+    if (task && !isValidTask(task)) {errorFields.push('task')}
+    if (details && !details.every(isValidText)) {errorFields.push('details')}
+    if (category && !isValidCategory(category)) {errorFields.push('category')}
+    if (!deadline || !isValidDeadline(deadline)) {errorFields.push('deadline')}
+
+    if (errorFields.length > 0) {
+        logger.error(`Invalid fields: ${errorFields.join(', ')}`);
+        res.status(400);
+        throw new Error(`Invalid fields: ${errorFields.join(', ')}`);
+    }
+
+    next();
+};
 
 const ValidateUserRequestBody = (req, res, next) => {
     const {
@@ -47,6 +91,7 @@ const ValidateUserRequestBody = (req, res, next) => {
     if (userId && !(isUsername(userId) || validator.isEmail(userId))) {errorFields.push('userId')}
 
     if (errorFields.length > 0) {
+        logger.error(`Invalid fields: ${errorFields.join(', ')}`);
         res.status(400);
         throw new Error(`Invalid fields: ${errorFields.join(', ')}`);
     }
