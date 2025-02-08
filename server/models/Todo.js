@@ -5,6 +5,9 @@ const todoSchema = new Schema({
         type: String,
         required: [true, 'Task to do is required']
     },
+    details: {
+        type: [String]
+    },
     category: {
         type: String,
         enum: [
@@ -16,6 +19,10 @@ const todoSchema = new Schema({
         ],
         required: true,
         message: 'Category must be one of: Immediate, Urgent, High Priority, Moderate Priority, Low Priority'
+    },
+    owner_id: {
+        type: String,
+        required: [true, 'User id is required']
     },
     deadline: {
         type: Date,
