@@ -117,7 +117,7 @@ const LoginUser = expressAsyncHandler(async (req, res) => {
     });
     
     logger.info(`User ${user.username} has been logged in`);
-    res.status(200).send({publicKey: publicKey});
+    res.status(200).send({publicKeyJwk: publicKey});
 });
 
 module.exports = {
