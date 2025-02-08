@@ -19,7 +19,7 @@ const ValidateToken = expressAsyncHandler(async (req, res, next) => {
 
     const payload = await auth.verifyToken(token, publicKeyJwk);
     
-    req.body.user = payload.user;
+    req.body.payload = payload;
 
     next();
 });
