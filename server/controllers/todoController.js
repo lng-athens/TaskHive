@@ -19,6 +19,7 @@ const AddTask = expressAsyncHandler(async (req, res) => {
         throw new Error('Failed to add task');
     }
 
+    logger.info(`New task added for user '${payload.user.username}'`);
     res.status(201).send({message: 'Task added successfully'});
 });
 
